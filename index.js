@@ -24,7 +24,8 @@ class Store {
       this.documents[id] ??= []
 
       for (let i = 0; i < fields.length; i++) {
-        if (shouldSet(this.versions[id][fields[i]], version)) {
+        const currentVersion = this.versions[id][fields[i]]
+        if (currentVersion === undefined || shouldSet(currentVersion, version)) {
           this.versions[id][fields[i]] = version
           this.documents[id][fields[i]] = values[i]
 
