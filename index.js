@@ -38,6 +38,38 @@ class Store {
 
     return filteredOps
   }
+
+  // const versions = {
+  //   id: [[0, '123abc'], [0, '123abc'], [0, '123abc']],
+  // }
+  // const documents = {
+  //   id: [5, 10, 'hello'],
+  // }
+  getSnapshotOps() {
+    const ops = []
+
+    // Per document, get all of the fields that belong to a version.
+    for (const id in this.documents) {
+      const versions = {}
+
+      for (let i = 0; i < this.versions[id].length; i++) {
+        const version = this.versions[id][i]
+        if (version !== undefined) {
+          versions[version] ??= []
+          versions[version].push(i)
+        }
+      }
+
+      // For each version, create an op.
+      for (const version in versions) {
+        const fields = versions[version]
+        const values = fields.map(field => this.documents[id][field])
+        ops.push({ version, id, fields, values })
+      }
+    }
+
+    return ops
+  }
 }
 
 export default Store
